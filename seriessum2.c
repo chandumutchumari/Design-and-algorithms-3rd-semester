@@ -15,3 +15,4 @@ int main(){
     printf("The sum of the series is: %lf",sum);
     return 0;
 }
+//time complexity is O(n).
