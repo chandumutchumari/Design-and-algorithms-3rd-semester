@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+};
+
+struct node* createNode(int data) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct node* insert(struct node* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (data < root->data)
+        root->left = insert(root->left, data);
+    else if (data > root->data)
+        root->right = insert(root->right, data);
+
+    return root;
+}
+
+struct node* findMin(struct node* root) {
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+
+struct node* deleteNode(struct node* root, int data) {
+    struct node* temp;
+
+    if (root == NULL)
+        return root;
+
+    if (data < root->data)
+        root->left = deleteNode(root->left, data);
+    else if (data > root->data)
+        root->right = deleteNode(root->right, data);
+    else {
+        if (root->left == NULL) {
+            temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL) {
+            temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+void inorder(struct node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+int main() {
+    struct node* root = NULL;
+    int n, i, data, del;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &data);
+        root = insert(root, data);
+    }
+
+    printf("Inorder traversal: ");
+    inorder(root);
+
+    printf("\nEnter element to delete: ");
+    scanf("%d", &del);
+
+    root = deleteNode(root, del);
+
+    printf("After deletion: ");
+    inorder(root);
+
+    return 0;
+}
